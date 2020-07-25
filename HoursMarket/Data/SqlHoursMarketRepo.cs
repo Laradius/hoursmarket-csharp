@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HoursMarket.Models
+namespace HoursMarket.Data
 {
-    public enum Roles
+    public class SqlHoursMarketRepo
     {
-        User = 0,
-        Manager = 1,
-        Administrator = 2
-
     }
 }
