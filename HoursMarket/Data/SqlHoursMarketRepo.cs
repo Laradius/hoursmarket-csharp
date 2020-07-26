@@ -15,6 +15,16 @@ namespace HoursMarket.Data
             _context = context;
         }
 
+        public void CreateHourOffer(HourOffer offer)
+        {
+            _context.HourOffers.Add(offer);
+        }
+
+        public void DeleteHourOffer(HourOffer offer)
+        {
+            _context.HourOffers.Remove(offer);
+        }
+
         public IEnumerable<HourOffer> GetAllHourOffers()
         {
             return _context.HourOffers.ToList();
@@ -23,6 +33,11 @@ namespace HoursMarket.Data
         public HourOffer GetHourOfferById(int id)
         {
             return _context.HourOffers.FirstOrDefault(h => id == h.Id);
+        }
+
+        public bool SaveChanges()
+        {
+            return (_context.SaveChanges() >= 0);
         }
     }
 }

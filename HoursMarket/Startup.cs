@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 
 namespace HoursMarket
 {
@@ -36,7 +37,12 @@ namespace HoursMarket
             //USE THIS FOR GITHUB:
             services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(File.ReadAllText("config.tmp")));
 
-            services.AddControllers();
+
+
+            services.AddControllers().AddNewtonsoftJson(s =>
+            {
+                s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

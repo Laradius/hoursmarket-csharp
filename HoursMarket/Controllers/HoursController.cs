@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using HoursMarket.Data;
+using HoursMarket.Dto;
+using HoursMarket.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -13,11 +17,13 @@ namespace HoursMarket.Controllers
     public class HoursController : ControllerBase
     {
 
-        readonly IHoursMarketRepo _repository;
+        private readonly IHoursMarketRepo _repository;
+        private readonly IMapper _mapper;
 
-        public HoursController(IHoursMarketRepo repo)
+        public HoursController(IHoursMarketRepo repo, IMapper mapper)
         {
             _repository = repo;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,7 +34,7 @@ namespace HoursMarket.Controllers
 
 
         [HttpGet("{id}")]
-        public ActionResult GetAllHourOffers(int id)
+        public ActionResult GetHourOfferById(int id)
         {
             var hourOffer = _repository.GetHourOfferById(id);
             if (hourOffer != null)
@@ -37,6 +43,58 @@ namespace HoursMarket.Controllers
             }
             return NotFound();
 
+        }
+
+        [HttpPost]
+        public ActionResult CreateHourOffer(HourOfferDto offer)
+        {
+
+            var hourOffer = _mapper.Map<HourOffer>(offer);
+
+            _repository.CreateHourOffer(hourOffer);
+            _repository.SaveChanges();
+
+            return CreatedAtAction(nameof(GetHourOfferById), new { id = hourOffer.Id }, hourOffer);
+
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteHourOffer(int id)
+        {
+            var hourOffer = _repository.GetHourOfferById(id);
+
+            if (hourOffer != null)
+            {
+                _repository.DeleteHourOffer(hourOffer);
+                _repository.SaveChanges();
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        [HttpPatch("{id}")]
+        public ActionResult UpdateHourOffer(int id, JsonPatchDocument<HourOfferDto> patch)
+        {
+            var hourOffer = _repository.GetHourOfferById(id);
+
+            if (hourOffer != null)
+            {
+                var commandToPatch = _mapper.Map<HourOfferDto>(hourOffer);
+                patch.ApplyTo(commandToPatch);
+
+                if (!TryValidateModel(commandToPatch))
+                {
+                    return ValidationProblem(ModelState);
+                }
+
+                _mapper.Map(commandToPatch, hourOffer);
+                _repository.SaveChanges();
+
+                return Ok();
+
+            }
+            return NotFound();
         }
 
     }

@@ -11,7 +11,10 @@ namespace HoursMarket.Data
 
         IEnumerable<HourOffer> GetAllHourOffers();
         HourOffer GetHourOfferById(int id);
+        void CreateHourOffer(HourOffer offer);
 
+        bool SaveChanges();
+        void DeleteHourOffer(HourOffer offer);
 
 
     }
