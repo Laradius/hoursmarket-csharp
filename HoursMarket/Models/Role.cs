@@ -7,8 +7,12 @@ namespace HoursMarket.Models
 {
     public enum Role
     {
-        User = 0,
+        Administrator = 0,
         Manager = 1,
-        Administrator = 2
+        InnogyManager = 2,
+        NFZManager = 3,
+        InnogyUser = 4,
+        NFZUser = 5,
+        Unassigned = 6,
     }
 }

@@ -35,7 +35,9 @@ namespace HoursMarket
             // services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("HoursMarketConection")));
 
             //USE THIS FOR GITHUB:
-            services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(File.ReadAllText("config.tmp")));
+            //  services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(File.ReadAllText("config.tmp")));
+
+            services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(Configuration["Secrets:HoursMarketConection"]));
 
 
 
