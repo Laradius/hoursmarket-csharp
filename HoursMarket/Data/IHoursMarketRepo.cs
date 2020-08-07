@@ -16,6 +16,8 @@ namespace HoursMarket.Data
         bool SaveChanges();
         void DeleteHourOffer(HourOffer offer);
 
+        Account GetAccountById(int id);
+        Account Login(string email, string password);
 
     }
 }

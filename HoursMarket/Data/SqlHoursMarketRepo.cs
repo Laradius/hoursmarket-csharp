@@ -25,6 +25,11 @@ namespace HoursMarket.Data
             _context.HourOffers.Remove(offer);
         }
 
+        public Account GetAccountById(int id)
+        {
+            return _context.Accounts.FirstOrDefault(x => id == x.Id);
+        }
+
         public IEnumerable<HourOffer> GetAllHourOffers()
         {
             return _context.HourOffers.ToList();
@@ -33,6 +38,11 @@ namespace HoursMarket.Data
         public HourOffer GetHourOfferById(int id)
         {
             return _context.HourOffers.FirstOrDefault(h => id == h.Id);
+        }
+
+        public Account Login(string email, string password)
+        {
+            return _context.Accounts.FirstOrDefault(x => email == x.Email && password == x.Password);
         }
 
         public bool SaveChanges()
