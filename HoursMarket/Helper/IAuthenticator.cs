@@ -1,4 +1,5 @@
-﻿using HoursMarket.Models;
+﻿using HoursMarket.Dto;
+using HoursMarket.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ namespace HoursMarket.Helper
     public interface IAuthenticator
     {
 
-        public string GenerateAuthenticatorToken(Account account);
+        public string GenerateAccountAccessToken(Account account);
+        public string GenerateRegistrationToken(AccountRegistrationDto accountRegistration);
 
 
     }

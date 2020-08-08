@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace HoursMarket.Dto
 {
-    public class AccountLoginDto
+    public class AccountPasswordDto
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required]
         public string Password { get; set; }
+
     }
 }

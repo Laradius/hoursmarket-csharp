@@ -15,6 +15,11 @@ namespace HoursMarket.Data
             _context = context;
         }
 
+        public void CreateAccount(Account account)
+        {
+            throw new NotImplementedException();
+        }
+
         public void CreateHourOffer(HourOffer offer)
         {
             _context.HourOffers.Add(offer);

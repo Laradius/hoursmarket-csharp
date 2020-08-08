@@ -4,22 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HoursMarket.Models
+namespace HoursMarket.Dto
 {
-    public class Account
+    public class AccountRegistrationDto
     {
-        [Key]
-        public int Id { get; set; }
 
-        [Required]
-        public int Role { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
-        public string Password { get; set; }
 
     }
 }

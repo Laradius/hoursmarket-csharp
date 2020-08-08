@@ -19,5 +19,7 @@ namespace HoursMarket.Data
         Account GetAccountById(int id);
         Account Login(string email, string password);
 
+        void CreateAccount(Account account);
+
     }
 }

@@ -18,7 +18,7 @@ namespace HoursMarket.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IAuthenticator _authenticator;
-        private IHoursMarketRepo _repository;
+        private readonly IHoursMarketRepo _repository;
 
         public LoginController(IAuthenticator authenticator, IHoursMarketRepo repository)
         {
@@ -40,7 +40,7 @@ namespace HoursMarket.Controllers
 
             Console.WriteLine($"{acc.Id} {acc.Email} {acc.Name}");
 
-            return Ok(_authenticator.GenerateAuthenticatorToken(acc));
+            return Ok(_authenticator.GenerateAccountAccessToken(acc));
         }
 
     }
