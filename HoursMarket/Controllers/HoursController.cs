@@ -29,6 +29,7 @@ namespace HoursMarket.Controllers
         [HttpGet]
         public ActionResult GetAllHourOffers()
         {
+
             return Ok(_repository.GetAllHourOffers());
         }
 

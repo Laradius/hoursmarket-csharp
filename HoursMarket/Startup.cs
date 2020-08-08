@@ -59,6 +59,7 @@ namespace HoursMarket
 
             services.AddScoped<IHoursMarketRepo, SqlHoursMarketRepo>();
             services.AddScoped<IAuthenticator, JwtAuthenticator>();
+            services.AddScoped<IAuthorizer, Authorizer>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

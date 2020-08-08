@@ -14,6 +14,7 @@ namespace HoursMarket.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class LoginController : ControllerBase
     {
         private readonly IAuthenticator _authenticator;
