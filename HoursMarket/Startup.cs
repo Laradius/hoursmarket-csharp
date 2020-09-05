@@ -27,8 +27,10 @@ namespace HoursMarket
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            StaticConfig = configuration;
         }
 
+        public static IConfiguration StaticConfig { get; private set; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -36,10 +38,8 @@ namespace HoursMarket
         {
 
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().Build());
-            });
+            services.AddCors();
+
 
             // USE THIS FOR PRODUCTION:
             // services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("HoursMarketConection")));
@@ -63,16 +63,7 @@ namespace HoursMarket
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Secrets:JwtIssuer"],
-                    ValidAudience = Configuration["Secrets:JwtAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Secrets:JwtSecretKey"])),
-                };
+                options.TokenValidationParameters = JwtAuthenticator.GetValidationParameters();
             });
 
             services.AddMvc();
@@ -81,6 +72,12 @@ namespace HoursMarket
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.UseCors(builder => builder
+      .AllowAnyOrigin()
+      .AllowAnyMethod()
+      .AllowAnyHeader());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

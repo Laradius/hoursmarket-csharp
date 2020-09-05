@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using HoursMarket.Dto;
@@ -63,6 +64,31 @@ namespace HoursMarket.Helper
 
             var encodetoken = new JwtSecurityTokenHandler().WriteToken(token);
             return encodetoken;
+        }
+
+        public bool ValidateToken(string authToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = GetValidationParameters();
+
+            SecurityToken validatedToken;
+            IPrincipal principal = tokenHandler.ValidateToken(authToken, validationParameters, out validatedToken);
+            return true;
+        }
+
+
+        public static TokenValidationParameters GetValidationParameters()
+        {
+            return new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = Startup.StaticConfig["Secrets:JwtIssuer"],
+                ValidAudience = Startup.StaticConfig["Secrets:JwtAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Secrets:JwtSecretKey"]))
+            };
         }
 
     }

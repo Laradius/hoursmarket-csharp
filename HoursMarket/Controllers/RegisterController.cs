@@ -28,18 +28,27 @@ namespace HoursMarket.Controllers
 
 
         [HttpPost]
-        [Route("begin")]
+
         [AllowAnonymous]
         public IActionResult GenerateRegistrationToken(AccountRegistrationDto account)
         {
             return Ok(_authenticator.GenerateRegistrationToken(account));
+
+
+
+            // return Ok(Request.Path.Value);
+
+            // return Ok(HttpContext.Request.Host.Value + "/?token=" + _authenticator.GenerateRegistrationToken(account));
         }
+
+
+
 
         [Route("finish")]
         [Authorize]
+        [HttpPost]
         public IActionResult EndRegistration(AccountPasswordDto password)
         {
-
 
             var name = User.Claims.FirstOrDefault(c => c.Type == "name").Value;
             var email = User.Claims.FirstOrDefault(c => c.Type == "e-mail").Value;

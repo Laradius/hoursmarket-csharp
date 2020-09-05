@@ -13,6 +13,8 @@ namespace HoursMarket.Helper
         public string GenerateAccountAccessToken(Account account);
         public string GenerateRegistrationToken(AccountRegistrationDto accountRegistration);
 
+        public bool ValidateToken(string authToken);
+
 
     }
 }
