@@ -56,10 +56,10 @@ namespace HoursMarket
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             services.AddScoped<IHoursMarketRepo, SqlHoursMarketRepo>();
             services.AddScoped<IAuthenticator, JwtAuthenticator>();
             services.AddScoped<IAuthorizer, Authorizer>();
+            services.AddScoped<IEmailSender, SmtpProvider>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

@@ -17,6 +17,9 @@ namespace HoursMarket.Data
         void DeleteHourOffer(HourOffer offer);
 
         Account GetAccountById(int id);
+        Account GetAccountByEmail(string email);
+
+        void DeleteAccount(int id);
         Account Login(string email, string password);
 
         void CreateAccount(Account account);

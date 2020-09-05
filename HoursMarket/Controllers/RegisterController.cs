@@ -19,11 +19,24 @@ namespace HoursMarket.Controllers
     {
         private readonly IAuthenticator _authenticator;
         private readonly IHoursMarketRepo _repository;
+        private readonly IEmailSender _email;
 
-        public RegisterController(IAuthenticator authenticator, IHoursMarketRepo repository)
+
+
+        private bool CanRegister(string email)
+        {
+            if (_repository.GetAccountByEmail(email) != null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public RegisterController(IAuthenticator authenticator, IHoursMarketRepo repository, IEmailSender email)
         {
             _authenticator = authenticator;
             _repository = repository;
+            _email = email;
         }
 
 
@@ -32,11 +45,16 @@ namespace HoursMarket.Controllers
         [AllowAnonymous]
         public IActionResult GenerateRegistrationToken(AccountRegistrationDto account)
         {
-            return Ok(_authenticator.GenerateRegistrationToken(account));
+            // return Ok(_authenticator.GenerateRegistrationToken(account));
 
+            if (!CanRegister(account.Email))
+            {
+                return Conflict("An account is already registered on that email.");
+            }
 
+            _email.SendEmail(account.Email, "Account Registration Link", @"http://localhost:8080/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
+            return Ok("Activation link sent");
 
-            // return Ok(Request.Path.Value);
 
             // return Ok(HttpContext.Request.Host.Value + "/?token=" + _authenticator.GenerateRegistrationToken(account));
         }
@@ -50,8 +68,15 @@ namespace HoursMarket.Controllers
         public IActionResult EndRegistration(AccountPasswordDto password)
         {
 
+
+
             var name = User.Claims.FirstOrDefault(c => c.Type == "name").Value;
             var email = User.Claims.FirstOrDefault(c => c.Type == "e-mail").Value;
+
+            if (!CanRegister(email))
+            {
+                return Conflict("Cannot finish registratoin. An account is already registered on that email.");
+            }
 
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(email))
             {
@@ -69,7 +94,7 @@ namespace HoursMarket.Controllers
             _repository.SaveChanges();
 
 
-            return Ok(acc);
+            return Ok("Account created successfully.");
         }
 
     }
