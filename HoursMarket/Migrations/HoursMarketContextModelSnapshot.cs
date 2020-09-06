@@ -56,7 +56,7 @@ namespace HoursMarket.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountId")
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("BeginDate")
@@ -80,7 +80,9 @@ namespace HoursMarket.Migrations
                 {
                     b.HasOne("HoursMarket.Models.Account", "Account")
                         .WithMany("HourOffers")
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

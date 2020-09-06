@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HoursMarket.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,6 +14,7 @@ namespace HoursMarket.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Role = table.Column<int>(nullable: false),
+                    CurrentProject = table.Column<int>(nullable: false),
                     Email = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false)
@@ -31,21 +32,33 @@ namespace HoursMarket.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
                     BeginDate = table.Column<DateTime>(nullable: false),
-                    EndDate = table.Column<DateTime>(nullable: false)
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    AccountId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HourOffers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HourOffers_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HourOffers_AccountId",
+                table: "HourOffers",
+                column: "AccountId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Accounts");
+                name: "HourOffers");
 
             migrationBuilder.DropTable(
-                name: "HourOffers");
+                name: "Accounts");
         }
     }
 }

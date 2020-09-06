@@ -9,10 +9,7 @@ namespace HoursMarket.Models
     {
         Administrator = 0,
         Manager = 1,
-        InnogyManager = 2,
-        NFZManager = 3,
-        InnogyUser = 4,
-        NFZUser = 5,
-        Unassigned = 6,
+        User = 2,
+        Unassigned = 3,
     }
 }

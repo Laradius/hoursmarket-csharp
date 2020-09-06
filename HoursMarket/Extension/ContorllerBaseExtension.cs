@@ -16,5 +16,11 @@ namespace HoursMarket.Extension
             return authorizer.AuthorizeByRoles(roles, controller.User.Claims.FirstOrDefault(c => c.Type == "ID").Value);
         }
 
+
+        public static int GetUserId(this ControllerBase controller)
+        {
+            return int.Parse(controller.User.Claims.FirstOrDefault(c => c.Type == "ID").Value);
+        }
+
     }
 }

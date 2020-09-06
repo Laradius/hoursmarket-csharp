@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HoursMarket.Migrations
 {
     [DbContext(typeof(HoursMarketContext))]
-    [Migration("20200725231958_Initial")]
-    partial class Initial
+    [Migration("20200906202225_AccountIdNotNullable")]
+    partial class AccountIdNotNullable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,9 @@ namespace HoursMarket.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CurrentProject")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -55,6 +58,9 @@ namespace HoursMarket.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("BeginDate")
                         .HasColumnType("datetime2");
 
@@ -67,7 +73,18 @@ namespace HoursMarket.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountId");
+
                     b.ToTable("HourOffers");
+                });
+
+            modelBuilder.Entity("HoursMarket.Models.HourOffer", b =>
+                {
+                    b.HasOne("HoursMarket.Models.Account", "Account")
+                        .WithMany("HourOffers")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

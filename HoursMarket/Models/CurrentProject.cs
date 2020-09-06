@@ -7,9 +7,9 @@ namespace HoursMarket.Models
 {
     public enum CurrentProject
     {
-        Innogy = 1,
-        NFZ = 2,
-        Unassigned = 3,
+        Innogy = 0,
+        NFZ = 1,
+        Unassigned = 2
 
     }
 }

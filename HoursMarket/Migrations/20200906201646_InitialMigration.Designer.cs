@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HoursMarket.Migrations
 {
     [DbContext(typeof(HoursMarketContext))]
-    [Migration("20200906180737_TableUpdateCurrentProject")]
-    partial class TableUpdateCurrentProject
+    [Migration("20200906201646_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

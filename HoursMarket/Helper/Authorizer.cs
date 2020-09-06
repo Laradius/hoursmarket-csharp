@@ -23,6 +23,11 @@ namespace HoursMarket.Helper
 
             var user = _repository.GetAccountById(int.Parse(userId));
 
+            if (user == null)
+            {
+                return false;
+            }
+
             foreach (Role r in roles)
             {
                 if ((int)r == user.Role)

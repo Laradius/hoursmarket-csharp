@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using HoursMarket.Data;
 using HoursMarket.Dto;
+using HoursMarket.Extension;
+using HoursMarket.Helper;
 using HoursMarket.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,20 +22,39 @@ namespace HoursMarket.Controllers
 
         private readonly IHoursMarketRepo _repository;
         private readonly IMapper _mapper;
+        private readonly IAuthorizer _authorizer;
 
-        public HoursController(IHoursMarketRepo repo, IMapper mapper)
+        public HoursController(IHoursMarketRepo repo, IMapper mapper, IAuthorizer authorizer)
         {
             _repository = repo;
             _mapper = mapper;
+            _authorizer = authorizer;
         }
 
 
         [HttpGet]
+        [Route("allhouroffers")]
+        [Authorize]
         public ActionResult GetAllHourOffers()
         {
 
+            if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
+            {
+                return Forbid();
+            }
+
             return Ok(_repository.GetAllHourOffers());
         }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult GetAuthorizedHourOffers()
+        {
+            var account = _repository.GetAccountById(this.GetUserId());
+            return Ok(_repository.GetAllHourOffers().Where(x => x.AccountId == account.Id));
+        }
+
+
 
 
         [HttpGet("{id}")]
