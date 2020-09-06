@@ -26,6 +26,7 @@ namespace HoursMarket.Controllers
             _mapper = mapper;
         }
 
+
         [HttpGet]
         public ActionResult GetAllHourOffers()
         {

@@ -36,6 +36,8 @@ namespace HoursMarket.Data
         }
 
         public Account GetAccountByEmail(string email)
+
+
         {
             return _context.Accounts.FirstOrDefault(x => email == x.Email);
         }

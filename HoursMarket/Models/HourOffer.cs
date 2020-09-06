@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace HoursMarket.Models
         public DateTime BeginDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+
+        [JsonIgnore]
+        public Account Account { get; set; }
 
 
     }

@@ -88,6 +88,7 @@ namespace HoursMarket.Controllers
             acc.Name = name;
             acc.Password = password.Password;
             acc.Role = (int)Role.Unassigned;
+            acc.CurrentProject = (int)CurrentProject.Unassigned;
 
 
             _repository.CreateAccount(acc);
