@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 namespace HoursMarket.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/houroffers")]
     public class HoursController : ControllerBase
     {
@@ -51,7 +52,7 @@ namespace HoursMarket.Controllers
         public ActionResult GetAuthorizedHourOffers()
         {
             var account = _repository.GetAccountById(this.GetUserId());
-            return Ok(_repository.GetAllHourOffers().Where(x => x.AccountId == account.Id));
+            return Ok(_repository.GetAllHourOffers().Where(x => x.Project == account.CurrentProject));
         }
 
 
@@ -70,10 +71,12 @@ namespace HoursMarket.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult CreateHourOffer(HourOfferDto offer)
         {
-
+            var account = _repository.GetAccountById(this.GetUserId());
             var hourOffer = _mapper.Map<HourOffer>(offer);
+            hourOffer.Project = account.CurrentProject;
 
             _repository.CreateHourOffer(hourOffer);
             _repository.SaveChanges();
@@ -83,6 +86,7 @@ namespace HoursMarket.Controllers
         }
 
         [HttpDelete("{id}")]
+
         public ActionResult DeleteHourOffer(int id)
         {
             var hourOffer = _repository.GetHourOfferById(id);

@@ -87,7 +87,7 @@ namespace HoursMarket.Controllers
             acc.Email = email;
             acc.Name = name;
             acc.Password = password.Password;
-            acc.Role = (int)Role.Unassigned;
+            acc.Role = (int)Role.User;
             acc.CurrentProject = (int)CurrentProject.Unassigned;
 
 

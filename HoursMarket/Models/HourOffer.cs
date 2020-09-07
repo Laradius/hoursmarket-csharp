@@ -19,6 +19,9 @@ namespace HoursMarket.Models
         public DateTime EndDate { get; set; }
 
         [JsonIgnore]
+        public int Project { get; set; }
+
+        [JsonIgnore]
         public int AccountId { get; set; }
         [JsonIgnore]
         public Account Account { get; set; }

@@ -4,14 +4,16 @@ using HoursMarket.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HoursMarket.Migrations
 {
     [DbContext(typeof(HoursMarketContext))]
-    partial class HoursMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20200907215011_HourOfferProjectAdd")]
+    partial class HourOfferProjectAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
