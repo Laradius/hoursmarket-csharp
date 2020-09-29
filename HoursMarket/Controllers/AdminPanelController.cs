@@ -27,6 +27,20 @@ namespace HoursMarket.Controllers
         }
 
 
+        [HttpGet]
+        [Route("allhouroffers")]
+        [Authorize]
+        public ActionResult GetAllHourOffers()
+        {
+
+            if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
+            {
+                return Forbid();
+            }
+
+            return Ok(_repository.GetAllHourOffers());
+        }
+
         [HttpPost]
         [Authorize]
         [Route("changerole")]

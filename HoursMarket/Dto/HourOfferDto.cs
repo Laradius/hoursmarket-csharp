@@ -11,8 +11,6 @@ namespace HoursMarket.Dto
     public class HourOfferDto
     {
         [Required]
-        public string Name { get; set; }
-        [Required]
         public DateTime BeginDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }

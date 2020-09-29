@@ -33,19 +33,7 @@ namespace HoursMarket.Controllers
         }
 
 
-        [HttpGet]
-        [Route("allhouroffers")]
-        [Authorize]
-        public ActionResult GetAllHourOffers()
-        {
 
-            if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
-            {
-                return Forbid();
-            }
-
-            return Ok(_repository.GetAllHourOffers());
-        }
 
         [HttpGet]
         [Authorize]
@@ -58,12 +46,24 @@ namespace HoursMarket.Controllers
 
 
 
+
+
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult GetHourOfferById(int id)
         {
             var hourOffer = _repository.GetHourOfferById(id);
+            var account = _repository.GetAccountById(this.GetUserId());
+
+
+
             if (hourOffer != null)
             {
+                if (hourOffer.Project != account.CurrentProject)
+                {
+                    return Forbid();
+                }
+
                 return Ok(hourOffer);
             }
             return NotFound();
@@ -77,6 +77,13 @@ namespace HoursMarket.Controllers
             var account = _repository.GetAccountById(this.GetUserId());
             var hourOffer = _mapper.Map<HourOffer>(offer);
             hourOffer.Project = account.CurrentProject;
+            hourOffer.Name = account.Name;
+            hourOffer.AccountId = account.Id;
+
+            if (hourOffer.BeginDate.Day != hourOffer.EndDate.Day || hourOffer.BeginDate.Month != hourOffer.EndDate.Month || hourOffer.BeginDate.Year != hourOffer.EndDate.Year || hourOffer.BeginDate.Ticks >= hourOffer.EndDate.Ticks || hourOffer.BeginDate < DateTime.Now)
+            {
+                return BadRequest();
+            }
 
             _repository.CreateHourOffer(hourOffer);
             _repository.SaveChanges();
@@ -86,13 +93,19 @@ namespace HoursMarket.Controllers
         }
 
         [HttpDelete("{id}")]
-
+        [Authorize]
         public ActionResult DeleteHourOffer(int id)
         {
             var hourOffer = _repository.GetHourOfferById(id);
+            var account = _repository.GetAccountById(this.GetUserId());
 
             if (hourOffer != null)
             {
+                if (hourOffer.AccountId != account.Id)
+                {
+                    return Forbid();
+                }
+
                 _repository.DeleteHourOffer(hourOffer);
                 _repository.SaveChanges();
                 return Ok();
@@ -102,12 +115,20 @@ namespace HoursMarket.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize]
         public ActionResult UpdateHourOffer(int id, JsonPatchDocument<HourOfferDto> patch)
         {
             var hourOffer = _repository.GetHourOfferById(id);
+            var account = _repository.GetAccountById(this.GetUserId());
 
             if (hourOffer != null)
             {
+                if (hourOffer.AccountId != account.Id)
+                {
+                    return Forbid();
+                }
+
+
                 var commandToPatch = _mapper.Map<HourOfferDto>(hourOffer);
                 patch.ApplyTo(commandToPatch);
 
