@@ -19,5 +19,7 @@ namespace HoursMarket.Data
         public DbSet<HourOffer> HourOffers { get; set; }
         public DbSet<Account> Accounts { get; set; }
 
+        public DbSet<ManagerEmail> ManagerEmails { get; set; }
+
     }
 }

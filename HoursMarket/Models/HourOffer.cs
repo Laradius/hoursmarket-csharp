@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,6 +18,9 @@ namespace HoursMarket.Models
         public DateTime BeginDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+
+        [NotMapped]
+        public bool Owned { get; set; }
 
         [JsonIgnore]
         public int Project { get; set; }

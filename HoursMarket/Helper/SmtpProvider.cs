@@ -39,7 +39,7 @@ namespace HoursMarket.Helper
                 using (var message = new MailMessage(fromAddress, toAddress)
                 {
                     Subject = title,
-                    Body = body
+                    Body = body,
                 })
                 {
                     smtp.Send(message);

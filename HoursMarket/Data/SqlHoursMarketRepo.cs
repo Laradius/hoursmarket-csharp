@@ -57,10 +57,12 @@ namespace HoursMarket.Data
             return _context.HourOffers.FirstOrDefault(h => id == h.Id);
         }
 
-        public Account Login(string email, string password)
+        public IEnumerable<ManagerEmail> GetManagerEmailsByProject(CurrentProject project)
         {
-            return _context.Accounts.FirstOrDefault(x => email == x.Email && password == x.Password);
+            return _context.ManagerEmails.Where(x => x.ProjectId == (int)project).ToList();
         }
+
+
 
         public bool SaveChanges()
         {

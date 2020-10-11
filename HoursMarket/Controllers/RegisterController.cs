@@ -10,6 +10,7 @@ using HoursMarket.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Sodium;
 
 namespace HoursMarket.Controllers
 {
@@ -86,7 +87,9 @@ namespace HoursMarket.Controllers
             Account acc = new Account();
             acc.Email = email;
             acc.Name = name;
-            acc.Password = password.Password;
+
+
+            acc.Password = PasswordHash.ScryptHashString(password.Password, PasswordHash.Strength.Medium);
             acc.Role = (int)Role.User;
             acc.CurrentProject = (int)CurrentProject.Unassigned;
 

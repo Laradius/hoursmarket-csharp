@@ -20,9 +20,10 @@ namespace HoursMarket.Data
         Account GetAccountByEmail(string email);
 
         void DeleteAccount(int id);
-        Account Login(string email, string password);
 
         void CreateAccount(Account account);
+
+        IEnumerable<ManagerEmail> GetManagerEmailsByProject(CurrentProject project);
 
     }
 }

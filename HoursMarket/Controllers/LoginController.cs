@@ -9,6 +9,7 @@ using HoursMarket.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Sodium;
 
 namespace HoursMarket.Controllers
 {
@@ -31,7 +32,9 @@ namespace HoursMarket.Controllers
         public IActionResult Login(AccountLoginDto account)
         {
 
-            var acc = _repository.Login(account.Email, account.Password);
+            var acc = _repository.GetAccountByEmail(account.Email);
+
+            if (PasswordHash.ScryptHashStringVerify(acc.Password, account.Password))
 
             if (acc == null)
             {
