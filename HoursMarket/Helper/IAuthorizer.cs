@@ -9,6 +9,7 @@ namespace HoursMarket.Helper
     public interface IAuthorizer
     {
         public bool AuthorizeByRoles(List<Role> roles, string userId);
+        public bool AuthorizeByCurrentProjects(List<CurrentProject> projects, string userId);
 
     }
 }

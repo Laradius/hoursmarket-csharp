@@ -36,6 +36,32 @@ namespace HoursMarket.Controllers
         }
 
 
+        [HttpGet("checkunassigned")]
+        [Authorize]
+        public ActionResult CheckUnassigned()
+        {
+
+
+
+            var account = _repository.GetAccountById(this.GetUserId());
+
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
+
+            if (account.CurrentProject == (int)CurrentProject.Unassigned)
+            {
+                return Ok(new { unassigned = true });
+            }
+            else
+            {
+                return Ok(new { unassigned = false });
+            }
+        }
+
+
 
 
         [HttpGet]
@@ -43,6 +69,12 @@ namespace HoursMarket.Controllers
         public ActionResult GetAuthorizedHourOffers()
         {
             var account = _repository.GetAccountById(this.GetUserId());
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
+
             List<HourOffer> offers = _repository.GetAllHourOffers().Where(x => x.Project == account.CurrentProject).ToList();
 
             foreach (HourOffer offer in offers)
@@ -71,6 +103,11 @@ namespace HoursMarket.Controllers
         {
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
 
 
 
@@ -101,12 +138,26 @@ namespace HoursMarket.Controllers
         public ActionResult CreateHourOffer(HourOfferDto offer)
         {
             var account = _repository.GetAccountById(this.GetUserId());
+
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!this.AuthorizeByCurrentProjects(new List<CurrentProject>() { CurrentProject.Innogy, CurrentProject.NFZ }, _authorizer))
+            {
+                return Forbid();
+            }
+
+
+
             var hourOffer = _mapper.Map<HourOffer>(offer);
             hourOffer.Project = account.CurrentProject;
             hourOffer.Name = account.Name;
             hourOffer.AccountId = account.Id;
 
-            if (hourOffer.BeginDate.Day != hourOffer.EndDate.Day || hourOffer.BeginDate.Month != hourOffer.EndDate.Month || hourOffer.BeginDate.Year != hourOffer.EndDate.Year || hourOffer.BeginDate.Ticks >= hourOffer.EndDate.Ticks || hourOffer.BeginDate < DateTime.Now)
+            if (hourOffer.EndDate.Ticks >= hourOffer.BeginDate.Ticks + TimeSpan.TicksPerDay || hourOffer.BeginDate.Ticks >= hourOffer.EndDate.Ticks || hourOffer.BeginDate < DateTime.Now)
             {
                 return BadRequest();
             }
@@ -130,6 +181,11 @@ namespace HoursMarket.Controllers
         {
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
 
             if (hourOffer != null)
             {
@@ -159,17 +215,21 @@ namespace HoursMarket.Controllers
                     }
                     else
                     {
-                        emailsFormatted += ",";
+                        emailsFormatted += ";";
                     }
+
+
 
                 }
 
-                _emailProvider.SendEmail(emailsFormatted, "HourMarket Transaction", $"{account.Name} wziął godziny {hourOffer.BeginDate} do {hourOffer.EndDate} od {hourOffer.Name}");
+                emailsFormatted += ";" + _repository.GetAccountById(hourOffer.AccountId).Email;
+
+                _emailProvider.SendEmail(emailsFormatted, "HourMarket Transaction", $"Dotyczy projektu: {Enum.GetName(typeof(CurrentProject), (CurrentProject)hourOffer.Project)}{Environment.NewLine}{account.Name} wziął godziny {hourOffer.BeginDate} do {hourOffer.EndDate} od {hourOffer.Name}");
 
 
 
                 _repository.DeleteHourOffer(hourOffer);
-                // _repository.SaveChanges();
+                _repository.SaveChanges();
                 return Ok();
             }
 
@@ -182,6 +242,11 @@ namespace HoursMarket.Controllers
         {
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
 
             if (hourOffer != null)
             {
@@ -204,6 +269,11 @@ namespace HoursMarket.Controllers
         {
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
 
 
 

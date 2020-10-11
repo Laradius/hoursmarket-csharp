@@ -16,12 +16,11 @@ namespace HoursMarket.Helper
         {
             _config = configuration;
         }
-        public void SendEmail(string recepient, string title, string body)
+        public void SendEmail(string recepients, string title, string body)
         {
 
 
             var fromAddress = new MailAddress(_config["Secrets:Email"], "Hours Market No Reply");
-            var toAddress = new MailAddress(recepient);
             string fromPassword = _config["Secrets:EmailPassword"];
 
 
@@ -36,12 +35,17 @@ namespace HoursMarket.Helper
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
             })
             {
-                using (var message = new MailMessage(fromAddress, toAddress)
+                using (var message = new MailMessage()
                 {
                     Subject = title,
                     Body = body,
                 })
                 {
+                    message.From = fromAddress;
+                    foreach (var address in recepients.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        message.To.Add(address);
+                    }
                     smtp.Send(message);
                 }
             }

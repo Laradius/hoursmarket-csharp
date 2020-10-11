@@ -16,6 +16,11 @@ namespace HoursMarket.Extension
             return authorizer.AuthorizeByRoles(roles, controller.User.Claims.FirstOrDefault(c => c.Type == "ID").Value);
         }
 
+        public static bool AuthorizeByCurrentProjects(this ControllerBase controller, List<CurrentProject> projects, IAuthorizer authorizer)
+        {
+            return authorizer.AuthorizeByCurrentProjects(projects, controller.User.Claims.FirstOrDefault(c => c.Type == "ID").Value);
+        }
+
 
         public static int GetUserId(this ControllerBase controller)
         {

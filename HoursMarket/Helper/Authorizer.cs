@@ -18,6 +18,28 @@ namespace HoursMarket.Helper
         }
 
 
+
+        public bool AuthorizeByCurrentProjects(List<CurrentProject> projects, string userId)
+        {
+
+            var user = _repository.GetAccountById(int.Parse(userId));
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            foreach (CurrentProject p in projects)
+            {
+                if ((int)p == user.CurrentProject)
+                {
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
         public bool AuthorizeByRoles(List<Role> roles, string userId)
         {
 

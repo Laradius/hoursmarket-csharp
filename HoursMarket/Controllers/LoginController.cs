@@ -34,9 +34,14 @@ namespace HoursMarket.Controllers
 
             var acc = _repository.GetAccountByEmail(account.Email);
 
-            if (PasswordHash.ScryptHashStringVerify(acc.Password, account.Password))
+
 
             if (acc == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!PasswordHash.ScryptHashStringVerify(acc.Password, account.Password))
             {
                 return Unauthorized();
             }

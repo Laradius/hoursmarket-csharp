@@ -53,7 +53,7 @@ namespace HoursMarket.Controllers
                 return Conflict("An account is already registered on that email.");
             }
 
-            _email.SendEmail(account.Email, "Account Registration Link", @"http://localhost:8080/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
+            _email.SendEmail(account.Email, "Account Registration Link", @"http://localhost:7777//#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
             return Ok("Activation link sent");
 
 
