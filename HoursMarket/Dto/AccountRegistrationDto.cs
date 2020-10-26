@@ -13,6 +13,8 @@ namespace HoursMarket.Dto
         [EmailAddress]
         public string Email { get; set; }
         [Required]
+        [MinLength(1)]
+        [MaxLength(128)]
         public string Name { get; set; }
 
     }

@@ -22,8 +22,12 @@ namespace HoursMarket.Models
         [Required]
         public string Email { get; set; }
         [Required]
+        [MinLength(1)]
+        [MaxLength(128)]
+        [RegularExpression("^[A - ZŁŚa - ząęółśżźćń] +$", ErrorMessage = "Invalid characters in Name")]
         public string Name { get; set; }
         [Required]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,32}$", ErrorMessage = @"Password must contain minimum eight characters, at least one letter, one number and one special character")]
         public string Password { get; set; }
 
         [JsonIgnore]
