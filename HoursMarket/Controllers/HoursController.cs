@@ -10,6 +10,7 @@ using HoursMarket.Helper;
 using HoursMarket.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -34,6 +35,9 @@ namespace HoursMarket.Controllers
             _emailProvider = emailProvider;
 
         }
+
+
+
 
 
         [HttpGet("checkunassigned")]
@@ -68,6 +72,8 @@ namespace HoursMarket.Controllers
         [Authorize]
         public ActionResult GetAuthorizedHourOffers()
         {
+
+
             var account = _repository.GetAccountById(this.GetUserId());
 
             if (account == null)
@@ -91,6 +97,36 @@ namespace HoursMarket.Controllers
 
             return Ok(offers);
         }
+
+
+        [HttpGet("myoffers")]
+        [Authorize]
+        public ActionResult GetMyOffers()
+        {
+            var account = _repository.GetAccountById(this.GetUserId());
+
+            if (account == null)
+            {
+                return Unauthorized();
+            }
+
+            List<HourOffer> offers = _repository.GetAllHourOffers().Where(x => x.AccountId == account.Id).ToList();
+
+            foreach (HourOffer offer in offers)
+            {
+                if (offer.AccountId == account.Id)
+                {
+                    offer.Owned = true;
+                }
+                else
+                {
+                    offer.Owned = false;
+                }
+            }
+
+            return Ok(offers);
+        }
+
 
 
 
@@ -162,8 +198,8 @@ namespace HoursMarket.Controllers
                 return BadRequest();
             }
 
-            hourOffer.BeginDate = hourOffer.BeginDate.ToUniversalTime();
-            hourOffer.EndDate = hourOffer.EndDate.ToUniversalTime();
+            //   hourOffer.BeginDate = hourOffer.BeginDate.ToUniversalTime();
+            //  hourOffer.EndDate = hourOffer.EndDate.ToUniversalTime();
 
             _repository.CreateHourOffer(hourOffer);
 
@@ -181,6 +217,11 @@ namespace HoursMarket.Controllers
         {
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
+
+            if (hourOffer.BeginDate < DateTime.Now)
+            {
+                _repository.DeleteHourOffer(hourOffer);
+            }
 
             if (account == null)
             {
@@ -267,6 +308,12 @@ namespace HoursMarket.Controllers
         [Authorize]
         public ActionResult UpdateHourOffer(int id, JsonPatchDocument<HourOfferDto> patch)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestObjectResult(ModelState);
+            }
+
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
 
@@ -274,6 +321,8 @@ namespace HoursMarket.Controllers
             {
                 return Unauthorized();
             }
+
+
 
 
 
@@ -289,17 +338,39 @@ namespace HoursMarket.Controllers
 
 
 
-                patch.ApplyTo(commandToPatch);
-
-                if (!TryValidateModel(commandToPatch))
+                foreach (Operation o in patch.Operations)
                 {
-                    return ValidationProblem(ModelState);
+
+                    if (o.OperationType != OperationType.Replace)
+                        return BadRequest();
                 }
+
+
+
+                try
+                {
+                    patch.ApplyTo(commandToPatch);
+                }
+                catch (ArgumentNullException)
+                {
+                    return BadRequest();
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return new BadRequestObjectResult(ModelState);
+                }
+
 
                 _mapper.Map(commandToPatch, hourOffer);
 
-                hourOffer.BeginDate = hourOffer.BeginDate.ToUniversalTime();
-                hourOffer.EndDate = hourOffer.EndDate.ToUniversalTime();
+                if (hourOffer.EndDate.Ticks >= hourOffer.BeginDate.Ticks + TimeSpan.TicksPerDay || hourOffer.BeginDate.Ticks >= hourOffer.EndDate.Ticks || hourOffer.BeginDate < DateTime.Now)
+                {
+                    return BadRequest();
+                }
+
+                hourOffer.BeginDate = hourOffer.BeginDate;
+                hourOffer.EndDate = hourOffer.EndDate;
 
                 _repository.SaveChanges();
 

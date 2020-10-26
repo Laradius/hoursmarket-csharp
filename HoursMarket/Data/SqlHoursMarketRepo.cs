@@ -49,7 +49,8 @@ namespace HoursMarket.Data
 
         public IEnumerable<HourOffer> GetAllHourOffers()
         {
-            return _context.HourOffers.ToList();
+
+            return SortAndDeleteHourOffers();
         }
 
         public HourOffer GetHourOfferById(int id)
@@ -62,7 +63,13 @@ namespace HoursMarket.Data
             return _context.ManagerEmails.Where(x => x.ProjectId == (int)project).ToList();
         }
 
-
+        private IEnumerable<HourOffer> SortAndDeleteHourOffers()
+        {
+            var list = _context.HourOffers.ToList();
+            list.Sort((x, y) => DateTime.Compare(x.BeginDate, y.BeginDate));
+            list.RemoveAll(x => x.BeginDate < DateTime.Now);
+            return list;
+        }
 
         public bool SaveChanges()
         {
