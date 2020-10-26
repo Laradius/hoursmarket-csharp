@@ -26,6 +26,20 @@ namespace HoursMarket.Controllers
             _authorizer = authorizer;
         }
 
+        [HttpGet]
+        [Route("checkrole")]
+        [Authorize]
+        public ActionResult CheckRole()
+        {
+
+            if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
+            {
+                return Forbid();
+            }
+
+            return Ok();
+        }
+
 
         [HttpGet]
         [Route("allhouroffers")]
@@ -44,14 +58,14 @@ namespace HoursMarket.Controllers
         [HttpPost]
         [Authorize]
         [Route("changerole")]
-        public IActionResult ChangeRoleById(AccountPermission permission)
+        public IActionResult ChangeRoleByEmail(AccountPermission permission)
         {
             if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
             {
                 return Forbid();
             }
 
-            Account account = _repository.GetAccountById(permission.Id);
+            Account account = _repository.GetAccountByEmail(permission.Email);
 
             if (account == null)
             {
@@ -59,9 +73,9 @@ namespace HoursMarket.Controllers
             }
 
 
-            if (Enum.IsDefined(typeof(Role), permission.Permission))
+            if (Enum.IsDefined(typeof(Role), permission.Value))
             {
-                account.Role = permission.Permission;
+                account.Role = permission.Value;
             }
             else
             {
@@ -76,14 +90,14 @@ namespace HoursMarket.Controllers
         [HttpPost]
         [Authorize]
         [Route("changeproject")]
-        public IActionResult ChangeProjectById(AccountPermission permission)
+        public IActionResult ChangeProjectByEmail(AccountPermission permission)
         {
             if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
             {
                 return Forbid();
             }
 
-            Account account = _repository.GetAccountById(permission.Id);
+            Account account = _repository.GetAccountByEmail(permission.Email);
 
             if (account == null)
             {
@@ -91,9 +105,9 @@ namespace HoursMarket.Controllers
             }
 
 
-            if (Enum.IsDefined(typeof(CurrentProject), permission.Permission))
+            if (Enum.IsDefined(typeof(CurrentProject), permission.Value))
             {
-                account.CurrentProject = permission.Permission;
+                account.CurrentProject = permission.Value;
             }
             else
             {
@@ -115,11 +129,11 @@ namespace HoursMarket.Controllers
                 return Forbid();
             }
 
-            List<string> roles = new List<string>();
+            List<object> roles = new List<object>();
 
             foreach (Role role in Enum.GetValues(typeof(Role)))
             {
-                roles.Add($"Role: {role.ToString()}={(int)role}");
+                roles.Add(new { Role = role.ToString(), Value = (int)role });
             }
 
 

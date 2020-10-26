@@ -10,10 +10,9 @@ namespace HoursMarket.Models
     {
 
         [Required]
-        public int Id { get; set; }
         public string Email { get; set; }
-
-        public int Permission { get; set; }
+        [Required]
+        public int Value { get; set; }
 
     }
 }
