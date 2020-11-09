@@ -28,7 +28,6 @@ namespace HoursMarket.Models
 
 
 
-        [JsonIgnore]
         public int Project { get; set; }
 
         [JsonIgnore]

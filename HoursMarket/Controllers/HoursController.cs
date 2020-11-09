@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -81,6 +82,8 @@ namespace HoursMarket.Controllers
             {
                 return Unauthorized();
             }
+
+
 
             List<HourOffer> offers = _repository.GetAllHourOffers().Where(x => x.Project == account.CurrentProject).ToList();
 

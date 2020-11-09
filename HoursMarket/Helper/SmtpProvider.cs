@@ -18,8 +18,8 @@ namespace HoursMarket.Helper
 
 #if DEBUG
 
-            var fromAddress = new MailAddress(_config["Secrets:Email"], "Hours Market No Reply");
-            string fromPassword = _config["Secrets:EmailPassword"];
+            var fromAddress = new MailAddress(Startup.StaticConfig["Secrets:Email"], "Hours Market No Reply");
+            string fromPassword = Startup.StaticConfig["Secrets:EmailPassword"];
 #elif RELEASE
             var fromAddress = new MailAddress(Startup.StaticConfig["Credentials:Email"], "Hours Market No Reply");
             string fromPassword = Startup.StaticConfig["Credentials:EmailPassword"];

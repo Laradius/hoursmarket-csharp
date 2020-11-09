@@ -140,27 +140,7 @@ namespace HoursMarket.Controllers
             return Ok(roles);
         }
 
-        [HttpGet]
-        [Authorize]
-        [Route("getcurrentprojects")]
-        public IActionResult GetAllCurrentProjects()
-        {
-            if (!this.AuthorizeByRoles(new List<Role> { Role.Administrator }, _authorizer))
-            {
-                return Forbid();
-            }
-
-            List<object> projects = new List<object>();
-
-            foreach (CurrentProject project in Enum.GetValues(typeof(CurrentProject)))
-            {
-                projects.Add(new { Project = project.ToString(), Value = (int)project });
-            }
-
-
-            return Ok(projects);
-
-        }
+       
 
 
 
