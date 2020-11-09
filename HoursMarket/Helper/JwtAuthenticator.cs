@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -23,7 +24,6 @@ namespace HoursMarket.Helper
         {
 
 
-
             SymmetricSecurityKey securityKey = null;
             SigningCredentials credentials = null;
 
@@ -35,6 +35,8 @@ namespace HoursMarket.Helper
             securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Credentials:JwtSecretKey"]));
 #endif
 
+
+            
             credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
 
@@ -122,14 +124,16 @@ namespace HoursMarket.Helper
 #if DEBUG
                 ValidIssuer = Startup.StaticConfig["Secrets:JwtIssuer"],
                 ValidAudience = Startup.StaticConfig["Secrets:JwtAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Secrets:JwtSecretKey"]))
 
 
 #elif RELEASE
                 ValidIssuer = Startup.StaticConfig["Credentials:JwtIssuer"],
                 ValidAudience = Startup.StaticConfig["Credentials:JwtAudience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Credentials:JwtSecretKey"]))
 #endif
 
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Secrets:JwtSecretKey"]))
+
             };
         }
 

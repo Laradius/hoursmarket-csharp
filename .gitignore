@@ -65,6 +65,8 @@ artifacts/
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
+appsettings.secrets.json
+
 # StyleCop
 StyleCopReport.xml
 

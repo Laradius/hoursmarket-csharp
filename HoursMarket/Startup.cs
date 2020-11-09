@@ -26,8 +26,14 @@ namespace HoursMarket
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
-            StaticConfig = configuration;
+            // Github secrets tracking prevention code, remove it and fill appsettings file and change appsettings.json action to Content
+
+            Configuration = new ConfigurationBuilder()
+         .AddJsonFile($"appsettings.secrets.json")
+         .Build();
+
+
+            StaticConfig = Configuration;
         }
 
         public static IConfiguration StaticConfig { get; private set; }
@@ -36,6 +42,9 @@ namespace HoursMarket
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+
+
 
 
             services.AddCors();
