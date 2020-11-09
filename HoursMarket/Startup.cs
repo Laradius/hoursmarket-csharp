@@ -41,12 +41,15 @@ namespace HoursMarket
             services.AddCors();
 
 
-            // USE THIS FOR PRODUCTION:
-            // services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("HoursMarketConection")));
-
-            //USE THIS FOR GITHUB:
+#if DEBUG
 
             services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(Configuration["Secrets:HoursMarketConection"]));
+#elif RELEASE
+            services.AddDbContext<HoursMarketContext>(opt => opt.UseSqlServer(Configuration["ConnectionStrings:HoursMarketConection"]));
+#endif
+
+
+
 
 
 
@@ -74,14 +77,10 @@ namespace HoursMarket
         {
 
             app.UseCors(builder => builder
-      .AllowAnyOrigin()
-      .AllowAnyMethod()
-      .AllowAnyHeader());
+       .AllowAnyOrigin()
+       .AllowAnyMethod()
+       .AllowAnyHeader());
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
 
             app.UseHttpsRedirection();
 

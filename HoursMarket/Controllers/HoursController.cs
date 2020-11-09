@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HoursMarket.Controllers
@@ -203,7 +204,15 @@ namespace HoursMarket.Controllers
 
             _repository.CreateHourOffer(hourOffer);
 
-            _repository.SaveChanges();
+
+            try
+            {
+                _repository.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
 
             return CreatedAtAction(nameof(GetHourOfferById), new { id = hourOffer.Id }, hourOffer);
 
@@ -215,13 +224,13 @@ namespace HoursMarket.Controllers
         [Authorize]
         public ActionResult TakeHourOffer(int id)
         {
+
+
+
             var hourOffer = _repository.GetHourOfferById(id);
             var account = _repository.GetAccountById(this.GetUserId());
 
-            if (hourOffer.BeginDate < DateTime.Now)
-            {
-                _repository.DeleteHourOffer(hourOffer);
-            }
+
 
             if (account == null)
             {
@@ -230,15 +239,28 @@ namespace HoursMarket.Controllers
 
             if (hourOffer != null)
             {
-
-                if (hourOffer.AccountId == account.Id)
+                if (hourOffer.Project != account.CurrentProject)
+                {
+                    return Forbid();
+                }
+                else if (hourOffer.AccountId == account.Id)
                 {
                     return BadRequest();
                 }
 
-                if (hourOffer.Project != account.CurrentProject)
+
+
+
+                try
                 {
-                    return Forbid();
+
+                    _repository.DeleteHourOffer(hourOffer);
+                    _repository.SaveChanges();
+                }
+
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound("Resource Already Deleted.");
                 }
 
 
@@ -264,13 +286,10 @@ namespace HoursMarket.Controllers
                 }
 
                 emailsFormatted += ";" + _repository.GetAccountById(hourOffer.AccountId).Email;
-
                 _emailProvider.SendEmail(emailsFormatted, "HourMarket Transaction", $"Dotyczy projektu: {Enum.GetName(typeof(CurrentProject), (CurrentProject)hourOffer.Project)}{Environment.NewLine}{account.Name} wziął godziny {hourOffer.BeginDate} do {hourOffer.EndDate} od {hourOffer.Name}");
 
 
 
-                _repository.DeleteHourOffer(hourOffer);
-                _repository.SaveChanges();
                 return Ok();
             }
 
@@ -296,8 +315,16 @@ namespace HoursMarket.Controllers
                     return Forbid();
                 }
 
-                _repository.DeleteHourOffer(hourOffer);
-                _repository.SaveChanges();
+                try
+                {
+                    _repository.DeleteHourOffer(hourOffer);
+                    _repository.SaveChanges();
+                }
+
+                catch (DbUpdateConcurrencyException)
+                {
+                    return NotFound("Resource Already Deleted.");
+                }
                 return Ok();
             }
 
@@ -372,7 +399,16 @@ namespace HoursMarket.Controllers
                 hourOffer.BeginDate = hourOffer.BeginDate;
                 hourOffer.EndDate = hourOffer.EndDate;
 
-                _repository.SaveChanges();
+                try
+                {
+
+                    _repository.SaveChanges();
+                }
+
+                catch (DbUpdateConcurrencyException)
+                {
+                    return BadRequest();
+                }
 
                 return Ok();
 

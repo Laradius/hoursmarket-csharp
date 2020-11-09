@@ -4,14 +4,16 @@ using HoursMarket.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HoursMarket.Migrations
 {
     [DbContext(typeof(HoursMarketContext))]
-    partial class HoursMarketContextModelSnapshot : ModelSnapshot
+    [Migration("20201026215306_TakenAdd")]
+    partial class TakenAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +73,9 @@ namespace HoursMarket.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Project")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Taken")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -150,11 +150,11 @@ namespace HoursMarket.Controllers
                 return Forbid();
             }
 
-            List<string> projects = new List<string>();
+            List<object> projects = new List<object>();
 
             foreach (CurrentProject project in Enum.GetValues(typeof(CurrentProject)))
             {
-                projects.Add($"Project: {project.ToString()}={(int)project}");
+                projects.Add(new { Project = project.ToString(), Value = (int)project });
             }
 
 

@@ -10,6 +10,7 @@ using HoursMarket.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Sodium;
 
 namespace HoursMarket.Controllers
@@ -53,7 +54,7 @@ namespace HoursMarket.Controllers
                 return Conflict("An account is already registered on that email.");
             }
 
-            _email.SendEmail(account.Email, "Account Registration Link", @"http://localhost:7777//#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
+            _email.SendEmail(account.Email, "Account Registration Link", @"http://hourmarket.hostingasp.pl/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
             return Ok("Activation link sent");
 
 
@@ -93,9 +94,15 @@ namespace HoursMarket.Controllers
             acc.Role = (int)Role.User;
             acc.CurrentProject = (int)CurrentProject.Unassigned;
 
-
-            _repository.CreateAccount(acc);
-            _repository.SaveChanges();
+            try
+            {
+                _repository.CreateAccount(acc);
+                _repository.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
 
 
             return Ok("Account created successfully.");

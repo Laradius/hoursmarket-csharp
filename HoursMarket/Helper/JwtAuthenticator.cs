@@ -15,19 +15,30 @@ namespace HoursMarket.Helper
 {
     public class JwtAuthenticator : IAuthenticator
     {
-        private readonly IConfiguration _config;
 
 
-        public JwtAuthenticator(IConfiguration config)
-        {
-            _config = config;
-        }
+
 
         public string GenerateRegistrationToken(AccountRegistrationDto accountRegistration)
         {
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Secrets:JwtSecretKey"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+
+            SymmetricSecurityKey securityKey = null;
+            SigningCredentials credentials = null;
+
+#if DEBUG
+            securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Secrets:JwtSecretKey"]));
+
+
+#elif RELEASE
+            securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Credentials:JwtSecretKey"]));
+#endif
+
+            credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+
+
 
             var claims = new[]
             {
@@ -36,8 +47,14 @@ namespace HoursMarket.Helper
             };
 
             var token = new JwtSecurityToken(
-                issuer: _config["Secrets:JwtIssuer"],
-                audience: _config["Secrets:JwtAudience"],
+#if DEBUG
+                issuer: Startup.StaticConfig["Secrets:JwtIssuer"],
+                audience: Startup.StaticConfig["Secrets:JwtAudience"],
+
+#elif RELEASE
+                   issuer: Startup.StaticConfig["Credentials:JwtIssuer"],
+                audience: Startup.StaticConfig["Credentials:JwtAudience"],
+#endif
                 claims,
                 expires: DateTime.Now.AddDays(7), signingCredentials: credentials);
 
@@ -48,8 +65,19 @@ namespace HoursMarket.Helper
         public string GenerateAccountAccessToken(Account account)
         {
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Secrets:JwtSecretKey"]));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            SymmetricSecurityKey securityKey = null;
+            SigningCredentials credentials = null;
+
+#if DEBUG
+            securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Secrets:JwtSecretKey"]));
+
+
+#elif RELEASE
+            securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Credentials:JwtSecretKey"]));
+#endif
+
+            credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
@@ -57,8 +85,14 @@ namespace HoursMarket.Helper
             };
 
             var token = new JwtSecurityToken(
-                issuer: _config["Secrets:JwtIssuer"],
-                audience: _config["Secrets:JwtAudience"],
+#if DEBUG
+                issuer:  Startup.StaticConfig["Secrets:JwtIssuer"],
+                audience:  Startup.StaticConfig["Secrets:JwtAudience"],
+
+#elif RELEASE
+                   issuer: Startup.StaticConfig["Credentials:JwtIssuer"],
+                audience: Startup.StaticConfig["Credentials:JwtAudience"],
+#endif
                 claims,
                 expires: DateTime.Now.AddDays(7), signingCredentials: credentials);
 
@@ -85,8 +119,16 @@ namespace HoursMarket.Helper
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+#if DEBUG
                 ValidIssuer = Startup.StaticConfig["Secrets:JwtIssuer"],
                 ValidAudience = Startup.StaticConfig["Secrets:JwtAudience"],
+
+
+#elif RELEASE
+                ValidIssuer = Startup.StaticConfig["Credentials:JwtIssuer"],
+                ValidAudience = Startup.StaticConfig["Credentials:JwtAudience"],
+#endif
+
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Startup.StaticConfig["Secrets:JwtSecretKey"]))
             };
         }

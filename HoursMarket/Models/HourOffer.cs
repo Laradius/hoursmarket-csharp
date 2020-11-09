@@ -26,6 +26,8 @@ namespace HoursMarket.Models
         public bool Unassigned { get; set; }
 
 
+
+
         [JsonIgnore]
         public int Project { get; set; }
 
