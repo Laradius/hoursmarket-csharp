@@ -49,13 +49,22 @@ namespace HoursMarket.Controllers
         {
             // return Ok(_authenticator.GenerateRegistrationToken(account));
 
+
+
             if (!CanRegister(account.Email))
             {
                 return Conflict("An account is already registered on that email.");
             }
+            Task.Run(() =>
+            {
+                _email.SendEmail(account.Email, "Account Registration Link", @"http://hourmarket.hostingasp.pl/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
+            });
 
-            _email.SendEmail(account.Email, "Account Registration Link", @"http://hourmarket.hostingasp.pl/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
+           
+            
             return Ok("Activation link sent");
+
+
 
 
             // return Ok(HttpContext.Request.Host.Value + "/?token=" + _authenticator.GenerateRegistrationToken(account));

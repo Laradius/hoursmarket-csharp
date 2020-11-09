@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,12 +29,18 @@ namespace HoursMarket
         {
             // Github secrets tracking prevention code, remove it and fill appsettings file and change appsettings.json action to Content
 
+
+#if RELEASE
             Configuration = new ConfigurationBuilder()
          .AddJsonFile($"appsettings.secrets.json")
          .Build();
-
+#else
+            Configuration = configuration;
+#endif
 
             StaticConfig = Configuration;
+
+
         }
 
         public static IConfiguration StaticConfig { get; private set; }
@@ -42,8 +49,6 @@ namespace HoursMarket
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-
 
 
 
@@ -74,8 +79,8 @@ namespace HoursMarket
             services.AddScoped<IEmailSender, SmtpProvider>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = JwtAuthenticator.GetValidationParameters();
+           {
+               options.TokenValidationParameters = JwtAuthenticator.GetValidationParameters();
             });
 
             services.AddMvc();
@@ -85,11 +90,12 @@ namespace HoursMarket
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            app.UseCors(builder => builder
-       .AllowAnyOrigin()
-       .AllowAnyMethod()
-       .AllowAnyHeader());
 
+
+            app.UseCors(builder => builder
+      .AllowAnyOrigin()
+      .AllowAnyMethod()
+      .AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
