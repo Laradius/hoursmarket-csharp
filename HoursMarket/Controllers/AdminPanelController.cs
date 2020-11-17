@@ -73,11 +73,18 @@ namespace HoursMarket.Controllers
             }
 
 
-            if (Enum.IsDefined(typeof(Role), permission.Value))
+            try
             {
-                account.Role = permission.Value;
+                if (Enum.IsDefined(typeof(Role), int.Parse(permission.Value)))
+                {
+                    account.Role = int.Parse(permission.Value);
+                }
+                else
+                {
+                    return BadRequest();
+                }
             }
-            else
+            catch (FormatException)
             {
                 return BadRequest();
             }
@@ -105,14 +112,27 @@ namespace HoursMarket.Controllers
             }
 
 
-            if (Enum.IsDefined(typeof(CurrentProject), permission.Value))
+
+            try
             {
-                account.CurrentProject = permission.Value;
+                int[] projs = ProjectParser.ParseProjects(permission.Value);
+
+                foreach (int p in projs)
+                {
+                    if (!Enum.IsDefined(typeof(CurrentProject), p))
+                    {
+                        return BadRequest();
+                    }
+                }
             }
-            else
+            catch (FormatException)
             {
                 return BadRequest();
             }
+
+
+            account.CurrentProject = permission.Value;
+
 
 
             _repository.SaveChanges();
@@ -140,7 +160,7 @@ namespace HoursMarket.Controllers
             return Ok(roles);
         }
 
-       
+
 
 
 

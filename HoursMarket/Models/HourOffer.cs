@@ -22,11 +22,6 @@ namespace HoursMarket.Models
         [NotMapped]
         public bool Owned { get; set; }
 
-        [NotMapped]
-        public bool Unassigned { get; set; }
-
-
-
 
         public int Project { get; set; }
 

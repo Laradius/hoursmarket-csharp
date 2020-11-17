@@ -57,11 +57,11 @@ namespace HoursMarket.Controllers
             }
             Task.Run(() =>
             {
-                _email.SendEmail(account.Email, "Account Registration Link", @"http://hourmarket.hostingasp.pl/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
+                _email.SendEmail(account.Email, "Account Registration Link", @"http://hourmarket.pl/#/registerend" + @"/?token=" + _authenticator.GenerateRegistrationToken(account));
             });
 
-           
-            
+
+
             return Ok("Activation link sent");
 
 
@@ -101,7 +101,7 @@ namespace HoursMarket.Controllers
 
             acc.Password = PasswordHash.ScryptHashString(password.Password, PasswordHash.Strength.Medium);
             acc.Role = (int)Role.User;
-            acc.CurrentProject = (int)CurrentProject.Unassigned;
+            acc.CurrentProject = CurrentProject.Unassigned.ToString("d");
 
             try
             {

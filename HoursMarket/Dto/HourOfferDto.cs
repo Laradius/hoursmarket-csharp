@@ -15,5 +15,8 @@ namespace HoursMarket.Dto
         [Required]
         public DateTime EndDate { get; set; }
 
+        [Required]
+        public int Project { get; set; }
+
     }
 }

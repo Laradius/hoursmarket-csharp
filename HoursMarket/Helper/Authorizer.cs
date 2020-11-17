@@ -31,10 +31,18 @@ namespace HoursMarket.Helper
 
             foreach (CurrentProject p in projects)
             {
-                if ((int)p == user.CurrentProject)
+
+                int[] currentProjects = ProjectParser.ParseProjects(user.CurrentProject);
+
+                foreach (int proj in currentProjects)
                 {
-                    return true;
+                    if ((int)p == proj)
+                    {
+                        return true;
+                    }
                 }
+
+
             }
             return false;
 

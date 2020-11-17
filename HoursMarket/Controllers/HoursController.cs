@@ -57,14 +57,22 @@ namespace HoursMarket.Controllers
                 return Unauthorized();
             }
 
-            if (account.CurrentProject == (int)CurrentProject.Unassigned)
+
+            int[] proj = ProjectParser.ParseProjects(account.CurrentProject);
+
+            foreach (int project in proj)
             {
-                return Ok(new { unassigned = true });
+                if (project == (int)CurrentProject.Unassigned)
+                {
+                    return Ok(new { unassigned = true });
+                }
             }
-            else
-            {
-                return Ok(new { unassigned = false });
-            }
+
+
+
+
+            return Ok(new { unassigned = false });
+
         }
 
 
@@ -85,7 +93,27 @@ namespace HoursMarket.Controllers
 
 
 
-            List<HourOffer> offers = _repository.GetAllHourOffers().Where(x => x.Project == account.CurrentProject).ToList();
+
+
+            IEnumerable<HourOffer> allOffers = _repository.GetAllHourOffers();
+
+
+            List<HourOffer> offers = new List<HourOffer>();
+
+
+
+
+            int[] proj = ProjectParser.ParseProjects(account.CurrentProject);
+
+            foreach (int project in proj)
+            {
+                offers.AddRange(allOffers.Where(x => x.Project == project));
+            }
+            offers.Sort((x, y) => DateTime.Compare(x.BeginDate, y.BeginDate));
+
+
+
+
 
             foreach (HourOffer offer in offers)
             {
@@ -151,11 +179,26 @@ namespace HoursMarket.Controllers
 
 
 
+
+
+
             if (hourOffer != null)
             {
-                if (hourOffer.Project != account.CurrentProject)
+
+                int[] projs = ProjectParser.ParseProjects(account.CurrentProject);
+
+                for (int i = 0; i < projs.Length; i++)
                 {
-                    return Forbid();
+                    if (hourOffer.Project == projs[i])
+                    {
+                        break;
+                    }
+
+
+                    if (i == projs.Length - 1)
+                    {
+                        return Forbid();
+                    }
                 }
 
                 if (hourOffer.AccountId == account.Id)
@@ -191,9 +234,31 @@ namespace HoursMarket.Controllers
             }
 
 
+            int[] projs = ProjectParser.ParseProjects(account.CurrentProject);
+
+            for (int i = 0; i < projs.Length; i++)
+            {
+                if (offer.Project == projs[i])
+                {
+                    break;
+                }
+
+
+                if (i == projs.Length - 1)
+                {
+                    return Forbid();
+                }
+            }
+
+            if (!Enum.IsDefined(typeof(CurrentProject), offer.Project))
+            {
+                return BadRequest();
+            }
+
+
 
             var hourOffer = _mapper.Map<HourOffer>(offer);
-            hourOffer.Project = account.CurrentProject;
+            hourOffer.Project = offer.Project;
             hourOffer.Name = account.Name;
             hourOffer.AccountId = account.Id;
 
@@ -206,6 +271,9 @@ namespace HoursMarket.Controllers
             //  hourOffer.EndDate = hourOffer.EndDate.ToUniversalTime();
 
             _repository.CreateHourOffer(hourOffer);
+
+
+
 
 
             try
@@ -242,11 +310,25 @@ namespace HoursMarket.Controllers
 
             if (hourOffer != null)
             {
-                if (hourOffer.Project != account.CurrentProject)
+
+                int[] projs = ProjectParser.ParseProjects(account.CurrentProject);
+
+                for (int i = 0; i < projs.Length; i++)
                 {
-                    return Forbid();
+                    if (hourOffer.Project == projs[i])
+                    {
+                        break;
+                    }
+
+
+                    if (i == projs.Length - 1)
+                    {
+                        return Forbid();
+                    }
                 }
-                else if (hourOffer.AccountId == account.Id)
+
+
+                if (hourOffer.AccountId == account.Id)
                 {
                     return BadRequest();
                 }
@@ -344,13 +426,18 @@ namespace HoursMarket.Controllers
                 return new BadRequestObjectResult(ModelState);
             }
 
+
+
             var hourOffer = _repository.GetHourOfferById(id);
+            var testOffer = new HourOffer();
             var account = _repository.GetAccountById(this.GetUserId());
 
             if (account == null)
             {
                 return Unauthorized();
             }
+
+
 
 
 
@@ -364,6 +451,7 @@ namespace HoursMarket.Controllers
                 }
 
 
+                var testPatchCommand = _mapper.Map<HourOfferDto>(testOffer);
                 var commandToPatch = _mapper.Map<HourOfferDto>(hourOffer);
 
 
@@ -379,6 +467,32 @@ namespace HoursMarket.Controllers
 
                 try
                 {
+                    patch.ApplyTo(testPatchCommand);
+
+
+                    int[] projs = ProjectParser.ParseProjects(account.CurrentProject);
+
+                    for (int i = 0; i < projs.Length; i++)
+                    {
+                        if (testPatchCommand.Project == projs[i])
+                        {
+                            break;
+                        }
+
+
+                        if (i == projs.Length - 1)
+                        {
+                            return Forbid();
+                        }
+                    }
+
+                    if (!Enum.IsDefined(typeof(CurrentProject), testPatchCommand.Project))
+                    {
+                        return BadRequest();
+                    }
+
+
+
                     patch.ApplyTo(commandToPatch);
                 }
                 catch (ArgumentNullException)
@@ -404,6 +518,8 @@ namespace HoursMarket.Controllers
 
                 try
                 {
+
+
 
                     _repository.SaveChanges();
                 }

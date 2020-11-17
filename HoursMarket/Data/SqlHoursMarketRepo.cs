@@ -47,6 +47,8 @@ namespace HoursMarket.Data
             return _context.Accounts.FirstOrDefault(x => id == x.Id);
         }
 
+
+
         public IEnumerable<HourOffer> GetAllHourOffers()
         {
 

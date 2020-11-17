@@ -12,7 +12,7 @@ namespace HoursMarket.Models
         [Required]
         public string Email { get; set; }
         [Required]
-        public int Value { get; set; }
+        public string Value { get; set; }
 
     }
 }
