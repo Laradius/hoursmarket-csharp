@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HoursMarket.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HoursMarket.Data
 {
@@ -39,6 +40,7 @@ namespace HoursMarket.Data
 
 
         {
+
             return _context.Accounts.FirstOrDefault(x => email == x.Email);
         }
 
@@ -47,6 +49,15 @@ namespace HoursMarket.Data
             return _context.Accounts.FirstOrDefault(x => id == x.Id);
         }
 
+
+
+        public IEnumerable<HourOffer> GetNonTrackedHourOffers()
+        {
+            SortAndDeleteHourOffers();
+
+            return _context.HourOffers.AsNoTracking().ToList();
+
+        }
 
 
         public IEnumerable<HourOffer> GetAllHourOffers()
@@ -70,6 +81,7 @@ namespace HoursMarket.Data
             var list = _context.HourOffers.ToList();
             list.Sort((x, y) => DateTime.Compare(x.BeginDate, y.BeginDate));
             list.RemoveAll(x => x.BeginDate < DateTime.Now);
+            SaveChanges();
             return list;
         }
 

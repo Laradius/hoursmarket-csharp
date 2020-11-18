@@ -9,7 +9,10 @@ namespace HoursMarket.Models
     {
         Innogy = 0,
         NFZ = 1,
-        Unassigned = 2
+        Unassigned = 2,
+        GIS = 3,
+        Koronawirus = 4,
+
 
     }
 }

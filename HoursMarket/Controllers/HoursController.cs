@@ -111,6 +111,30 @@ namespace HoursMarket.Controllers
             }
             offers.Sort((x, y) => DateTime.Compare(x.BeginDate, y.BeginDate));
 
+            //int length = 0;
+            //string last = "";
+
+            //foreach (HourOffer o in offers)
+            //{
+
+
+            //    last = "";
+            //    string s = o.Name;
+            //    last += s[s.Length - 1];
+            //    length = s.Length - 2;
+
+            //    string additon = String.Concat(Enumerable.Repeat("*", length));
+
+            //    s = s.Remove(1, o.Name.Length - 1).Insert(1, additon);
+
+            //    s += last;
+
+            //    o.Name = s;
+
+
+
+            //}
+
 
 
 
@@ -228,7 +252,7 @@ namespace HoursMarket.Controllers
                 return Unauthorized();
             }
 
-            if (!this.AuthorizeByCurrentProjects(new List<CurrentProject>() { CurrentProject.Innogy, CurrentProject.NFZ }, _authorizer))
+            if (!this.AuthorizeByCurrentProjects(new List<CurrentProject>() { CurrentProject.Innogy, CurrentProject.NFZ, CurrentProject.Koronawirus, CurrentProject.GIS }, _authorizer))
             {
                 return Forbid();
             }

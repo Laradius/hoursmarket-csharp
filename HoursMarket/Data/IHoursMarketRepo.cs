@@ -17,7 +17,7 @@ namespace HoursMarket.Data
         void DeleteHourOffer(HourOffer offer);
 
 
-
+        IEnumerable<HourOffer> GetNonTrackedHourOffers();
         Account GetAccountById(int id);
         Account GetAccountByEmail(string email);
 
